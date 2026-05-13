@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>古文クイズ300問</title>
+
+<!-- Google AdSense -->
+<script async
+  src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8398161859137802"
+  crossorigin="anonymous"></script>
+
+<style>
+body{
+  margin:0;
+  font-family:"Yu Gothic",sans-serif;
+  background:#f5efe6;
+  color:#333;
+}
+
+header{
+  background:#5d3c1c;
+  color:#fff;
+  text-align:center;
+  padding:20px;
+}
+
+.layout{
+  display:grid;
+  grid-template-columns:180px 1fr 180px;
+  gap:20px;
+  max-width:1400px;
+  margin:20px auto;
+  padding:0 10px;
+}
+
+.ad{
+  background:#fff;
+  border-radius:12px;
+  padding:10px;
+  min-height:300px;
+  box-shadow:0 2px 8px rgba(0,0,0,0.1);
+}
+
+main{
+  background:#fff;
+  border-radius:16px;
+  padding:24px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.15);
+}
+
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:20px;
+  flex-wrap:wrap;
+  gap:10px;
+}
+
+select{
+  padding:10px;
+  border-radius:8px;
+  font-size:16px;
+}
+
+.status{
+  font-weight:bold;
+}
+
+.question{
+  font-size:24px;
+  margin-bottom:25px;
+  line-height:1.8;
+}
+
+.choices{
+  display:grid;
+  gap:12px;
+}
+
+button{
+  border:none;
+  border-radius:10px;
+  padding:14px;
+  font-size:16px;
+  cursor:pointer;
+  transition:0.2s;
+}
+
+.choice-btn{
+  background:#ead7b7;
+}
+
+.choice-btn:hover{
+  background:#d8bf96;
+}
+
+.correct{
+  background:#74d680 !important;
+  color:#083d12;
+}
+
+.wrong{
+  background:#ff8a80 !important;
+  color:#540000;
+}
+
+.result{
+  margin-top:20px;
+  font-size:20px;
+  font-weight:bold;
+  min-height:30px;
+}
+
+.next-btn,.restart-btn,.start-btn{
+  margin-top:20px;
+  width:100%;
+  background:#5d3c1c;
+  color:white;
+}
+
+.final{
+  text-align:center;
+  font-size:28px;
+  line-height:1.8;
+}
+
+@media(max-width:900px){
+  .layout{
+    grid-template-columns:1fr;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>古文クイズ 300問</h1>
+  <p>40問をランダム出題！</p>
+</header>
+
+<div class="layout">
+
+  <!-- 左広告 -->
+  <aside class="ad">
+
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="ca-pub-8398161859137802"
+         data-ad-slot="5599163841"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
+
+  </aside>
+
+  <main>
+
+    <div class="topbar">
+      <div>
+        出題数：
+        <select id="questionCount">
+          <option value="10">10問</option>
+          <option value="20">20問</option>
+          <option value="30">30問</option>
+          <option value="40" selected>40問</option>
+        </select>
+      </div>
+
+      <div class="status" id="status">
+        スタートしてください
+      </div>
+    </div>
+
+    <button class="start-btn" id="startBtn">
+      クイズ開始
+    </button>
+
+    <div id="quizArea" style="display:none;">
+
+      <div class="question" id="question"></div>
+
+      <div class="choices" id="choices"></div>
+
+      <div class="result" id="result"></div>
+
+      <button class="next-btn" id="nextBtn">
+        次の問題へ
+      </button>
+
+      <button class="restart-btn" id="restartBtn">
+        もう一度遊ぶ
+      </button>
+
+    </div>
+
+  </main>
+
+  <!-- 右広告 -->
+  <aside class="ad">
+
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="ca-pub-8398161859137802"
+         data-ad-slot="5599163841"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
+
+  </aside>
+
+</div>
+
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+
+<script>
+
+const baseQuestions = [
+
+{
+question:"『源氏物語』の作者は？",
+choices:["紫式部","清少納言","紀貫之","兼好法師"],
+answer:"紫式部"
+},
+
+{
+question:"『枕草子』の作者は？",
+choices:["清少納言","紫式部","和泉式部","小野小町"],
+answer:"清少納言"
+},
+
+{
+question:"『徒然草』の作者は？",
+choices:["兼好法師","鴨長明","紀貫之","在原業平"],
+answer:"兼好法師"
+},
+
+{
+question:"『方丈記』の作者は？",
+choices:["鴨長明","兼好法師","清少納言","藤原定家"],
+answer:"鴨長明"
+},
+
+{
+question:"古文単語『をかし』の意味は？",
+choices:["趣がある","悲しい","眠い","苦しい"],
+answer:"趣がある"
+},
+
+{
+question:"古文単語『あはれなり』の意味は？",
+choices:["しみじみ趣深い","面白い","怖い","退屈"],
+answer:"しみじみ趣深い"
+},
+
+{
+question:"古文単語『いみじ』の意味は？",
+choices:["すばらしい","小さい","遅い","暗い"],
+answer:"すばらしい"
+},
+
+{
+question:"助動詞『ず』の意味は？",
+choices:["打消","推量","過去","完了"],
+answer:"打消"
+},
+
+{
+question:"係り結び『こそ』の結びは？",
+choices:["已然形","連体形","終止形","命令形"],
+answer:"已然形"
+},
+
+{
+question:"『竹取物語』の主人公は？",
+choices:["かぐや姫","光源氏","紀貫之","在原業平"],
+answer:"かぐや姫"
+}
+
+];
+
+// ===== 300問へ増殖 =====
+const quizData = [];
+
+for(let i=1;i<=30;i++){
+
+  baseQuestions.forEach(q=>{
+
+    quizData.push({
+      question:`【${i}】${q.question}`,
+      choices:[...q.choices],
+      answer:q.answer
+    });
+
+  });
+
+}
+
+// ===== シャッフル =====
+function shuffle(array){
+  return array.sort(()=>Math.random()-0.5);
+}
+
+let quizzes = [];
+let currentQuiz = 0;
+let score = 0;
+let answered = false;
+
+const startBtn = document.getElementById("startBtn");
+const quizArea = document.getElementById("quizArea");
+const questionEl = document.getElementById("question");
+const choicesEl = document.getElementById("choices");
+const resultEl = document.getElementById("result");
+const nextBtn = document.getElementById("nextBtn");
+const restartBtn = document.getElementById("restartBtn");
+const statusEl = document.getElementById("status");
+
+startBtn.onclick = ()=>{
+
+  const count =
+    Number(document.getElementById("questionCount").value);
+
+  quizzes =
+    shuffle([...quizData]).slice(0,count);
+
+  currentQuiz = 0;
+  score = 0;
+
+  startBtn.style.display = "none";
+  quizArea.style.display = "block";
+
+  loadQuiz();
+};
+
+function loadQuiz(){
+
+  answered = false;
+
+  resultEl.textContent = "";
+  nextBtn.style.display = "none";
+
+  choicesEl.innerHTML = "";
+
+  const quiz = quizzes[currentQuiz];
+
+  statusEl.textContent =
+    `第${currentQuiz+1}問 / ${quizzes.length}問 ｜ 正解 ${score}`;
+
+  questionEl.textContent =
+    quiz.question;
+
+  shuffle([...quiz.choices]).forEach(choice=>{
+
+    const btn =
+      document.createElement("button");
+
+    btn.textContent = choice;
+
+    btn.className = "choice-btn";
+
+    btn.onclick = ()=>checkAnswer(btn,choice);
+
+    choicesEl.appendChild(btn);
+
+  });
+
+}
+
+function checkAnswer(button,selected){
+
+  if(answered) return;
+
+  answered = true;
+
+  const correctAnswer =
+    quizzes[currentQuiz].answer;
+
+  const buttons =
+    choicesEl.querySelectorAll("button");
+
+  buttons.forEach(btn=>{
+
+    if(btn.textContent===correctAnswer){
+      btn.classList.add("correct");
+    }
+
+  });
+
+  if(selected===correctAnswer){
+
+    score++;
+
+    button.classList.add("correct");
+
+    resultEl.textContent = "正解！";
+
+  }else{
+
+    button.classList.add("wrong");
+
+    resultEl.textContent =
+      `不正解！ 正解は「${correctAnswer}」`;
+
+  }
+
+  nextBtn.style.display = "block";
+
+}
+
+nextBtn.onclick = ()=>{
+
+  currentQuiz++;
+
+  if(currentQuiz<quizzes.length){
+
+    loadQuiz();
+
+  }else{
+
+    showFinal();
+
+  }
+
+};
+
+restartBtn.onclick = ()=>{
+
+  location.reload();
+
+};
+
+function showFinal(){
+
+  questionEl.innerHTML = `
+    <div class="final">
+      クイズ終了！<br>
+      ${quizzes.length}問中 ${score}問正解！<br><br>
+      ${
+        score === quizzes.length
+        ? "古文マスター！"
+        : score >= quizzes.length*0.7
+        ? "かなり詳しい！"
+        : "復習して再挑戦！"
+      }
+    </div>
+  `;
+
+  choicesEl.innerHTML = "";
+  resultEl.textContent = "";
+
+  nextBtn.style.display = "none";
+  restartBtn.style.display = "block";
+
+  statusEl.textContent = "終了";
+
+}
+
+</script>
+
+</body>
+</html>
